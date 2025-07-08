@@ -16,25 +16,25 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        python = pkgs.python313;
-        pythonPackages = python.pkgs;
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            python
-            uv
+            rustc
+            cargo
+            rustfmt
+            clippy
           ];
         };
 
-        packages.default = pythonPackages.buildPythonPackage {
+        packages.default = pkgs.rustPlatform.buildRustPackage {
           pname = "line-cook";
           version = "0.1.0";
           src = ./.;
 
-          # propagatedBuildInputs = with pythonPackages; [
-          #   # Add MCP dependencies here
-          # ];
+          cargoLock = {
+            lockFile = ./Cargo.lock;
+          };
         };
       }
     );
